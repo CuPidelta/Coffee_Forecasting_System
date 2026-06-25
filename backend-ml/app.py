@@ -4,7 +4,7 @@ import pandas as pd
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Para payagan ang koneksyon mula sa frontend/Node.js server
+CORS(app)  
 
 # I-load ang trained model at mga columns
 with open('coffee_model.pkl', 'rb') as f:
