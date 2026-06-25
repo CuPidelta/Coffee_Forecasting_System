@@ -1,0 +1,272 @@
+/* ============================================================
+   login.css — Sales Demand Forecasting System
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #e2e8f0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* === Page background === */
+.page-bg {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+  padding: 2rem 3rem;
+}
+
+/* === Left panel === */
+.left-panel {
+  flex: 1;
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+}
+
+.left-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.left-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: rgba(99, 102, 241, 0.18);
+  border: 1.5px solid rgba(129, 140, 248, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a5b4fc;
+}
+
+.left-icon i {
+  font-size: 28px;
+}
+
+.left-brand h1 {
+  font-size: 36px;
+  font-weight: 600;
+  color: #e2e8f0;
+  line-height: 1.2;
+}
+
+.left-brand h1 .accent {
+  color: #818cf8;
+}
+
+.left-desc {
+  font-size: 15px;
+  color: rgba(226, 232, 240, 0.45);
+  line-height: 1.7;
+  max-width: 340px;
+}
+
+/* === Login card === */
+.card-login {
+  background: rgba(255, 255, 255, 0.05);
+  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 380px;
+  flex-shrink: 0;
+}
+
+/* === Card header === */
+.card-header {
+  text-align: left;
+  margin-bottom: 1.75rem;
+}
+
+.sys-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(99, 102, 241, 0.12);
+  border: 0.5px solid rgba(129, 140, 248, 0.25);
+  border-radius: 20px;
+  padding: 3px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(165, 180, 252, 0.8);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.75rem;
+}
+
+.sys-badge i {
+  font-size: 12px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: rgba(226, 232, 240, 0.45);
+}
+
+/* === Form groups === */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(226, 232, 240, 0.5);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.form-group input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #e2e8f0;
+  outline: none;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.form-group input::placeholder {
+  color: rgba(226, 232, 240, 0.2);
+}
+
+.form-group input:focus {
+  border-color: rgba(129, 140, 248, 0.6);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* === Submit button === */
+#login-btn {
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 11px;
+  background: #4f46e5;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition:
+    background 0.15s,
+    transform 0.1s;
+  font-family: inherit;
+}
+
+#login-btn:hover:not(:disabled) {
+  background: #6366f1;
+}
+
+#login-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+#login-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+#login-btn i {
+  font-size: 16px;
+}
+
+.btn-loader {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* === Divider === */
+.divider {
+  height: 0.5px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 1.5rem 0;
+}
+
+/* === Footer note === */
+.footer-note {
+  font-size: 12px;
+  color: rgba(226, 232, 240, 0.3);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.footer-note i {
+  font-size: 13px;
+}
+
+/* === Error box === */
+.error-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 1rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 0.5px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #fca5a5;
+}
+
+.error-box i {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* === Responsive — stack on mobile === */
+@media (max-width: 768px) {
+  .page-bg {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem 1rem;
+  }
+
+  .left-panel {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .left-brand {
+    align-items: center;
+  }
+
+  .left-desc {
+    text-align: center;
+  }
+
+  .card-login {
+    max-width: 100%;
+  }
+
+  .card-header {
+    text-align: center;
+  }
+}

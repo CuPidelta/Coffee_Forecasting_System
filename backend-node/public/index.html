@@ -3,138 +3,296 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Coffee Shop Demand Forecaster</title>
+    <title>Sales Demand Forecasting System</title>
+
+    <script>
+      if (localStorage.getItem("isLoggedIn") !== "true") {
+        window.location.href = "login.html";
+      }
+    </script>
+
     <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   </head>
   <body>
     <div class="page-bg">
-      <div class="steam-wrap" aria-hidden="true">
-        <span class="steam s1"></span>
-        <span class="steam s2"></span>
-        <span class="steam s3"></span>
-      </div>
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-icon">
+            <i class="ti ti-chart-line"></i>
+          </div>
+          <div>
+            <div class="topbar-title">
+              Sales Demand <span class="accent">Forecasting System</span>
+            </div>
+            <div class="topbar-sub">AI-powered X & y prediction engine</div>
+          </div>
+        </div>
+        <div
+          class="topbar-actions"
+          style="display: flex; gap: 10px; align-items: center"
+        >
+          <button
+            id="export-excel-btn"
+            class="export-btn"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              padding: 0.5rem 1rem;
+              border-radius: 6px;
+              border: 1px solid #107c41;
+              background: #107c41;
+              color: white;
+              cursor: pointer;
+              font-weight: 500;
+            "
+          >
+            <i class="ti ti-file-spreadsheet"></i>
+            Export Report
+          </button>
+          <button class="logout-btn" onclick="logout()">
+            <i class="ti ti-logout"></i>
+            Logout
+          </button>
+        </div>
+      </header>
 
-      <div class="card">
-        <header class="card-header">
-          <div class="cup-icon">☕</div>
-          <h1>Sales Demand<br /><span class="accent">Forecaster</span></h1>
-          <p class="subtitle">
-            AI-powered prediction engine para sa iyong coffee shop
-          </p>
-        </header>
+      <main class="dashboard">
+        <section class="metric-row" aria-label="Summary metrics">
+          <div class="mcard">
+            <div class="mcard-icon"><i class="ti ti-currency-peso"></i></div>
+            <div class="mcard-label">Total Sales (y)</div>
+            <div class="mcard-value" id="stat-total">₱0.00</div>
+            <div class="mcard-sub" id="stat-total-sub">No forecasts yet</div>
+          </div>
+          <div class="mcard">
+            <div class="mcard-icon"><i class="ti ti-chart-bar"></i></div>
+            <div class="mcard-label">Avg Output (y) per Run</div>
+            <div class="mcard-value" id="stat-avg">₱0.00</div>
+            <div class="mcard-sub" id="stat-count-sub">0 predictions</div>
+          </div>
+          <div class="mcard">
+            <div class="mcard-icon"><i class="ti ti-award"></i></div>
+            <div class="mcard-label">Top Category (X)</div>
+            <div class="mcard-value mcard-value--sm" id="stat-top-cat">—</div>
+            <div class="mcard-sub" id="stat-top-val">Run a forecast first</div>
+          </div>
+          <div class="mcard">
+            <div class="mcard-icon"><i class="ti ti-clock"></i></div>
+            <div class="mcard-label">Peak Hour (X)</div>
+            <div class="mcard-value mcard-value--sm" id="stat-peak-hour">—</div>
+            <div class="mcard-sub" id="stat-peak-sub">Run a forecast first</div>
+          </div>
+        </section>
 
-        <form id="prediction-form" novalidate>
-          <div class="fields-grid">
-            <div class="form-group">
-              <label for="store_location">Store Location</label>
-              <div class="select-wrap">
-                <select id="store_location" required>
-                  <option value="Lower Manhattan">Lower Manhattan</option>
-                  <option value="Hell's Kitchen">Hell's Kitchen</option>
-                  <option value="Astoria">Astoria</option>
-                </select>
-                <span class="chevron">▾</span>
+        <section class="charts-row">
+          <div class="panel panel--wide">
+            <div class="panel-header">
+              <div>
+                <span class="panel-title"
+                  >Forecast Trend — Target Output (y) History</span
+                >
+                <span class="panel-hint" id="chart-hint"
+                  >Your predictions will appear here</span
+                >
               </div>
             </div>
-
-            <div class="form-group">
-              <label for="product_category">Product Category</label>
-              <div class="select-wrap">
-                <select id="product_category" required>
-                  <option value="">— Pumili ng kategorya —</option>
-                  <option value="Bakery">Bakery</option>
-                  <option value="Branded">Branded</option>
-                  <option value="Coffee">Coffee</option>
-                  <option value="Coffee beans">Coffee Beans</option>
-                  <option value="Drinking Chocolate">Drinking Chocolate</option>
-                  <option value="Flavours">Flavours</option>
-                  <option value="Loose Tea">Loose Tea</option>
-                  <option value="Packaged Chocolate">Packaged Chocolate</option>
-                  <option value="Tea">Tea</option>
-                </select>
-                <span class="chevron">▾</span>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="day_of_week">Araw ng Linggo</label>
-              <div class="select-wrap">
-                <select id="day_of_week" required>
-                  <option value="0">Lunes (Monday)</option>
-                  <option value="1">Martes (Tuesday)</option>
-                  <option value="2">Miyerkules (Wednesday)</option>
-                  <option value="3">Huwebes (Thursday)</option>
-                  <option value="4">Biyernes (Friday)</option>
-                  <option value="5">Sabado (Saturday)</option>
-                  <option value="6">Linggo (Sunday)</option>
-                </select>
-                <span class="chevron">▾</span>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="month">Buwan</label>
-              <div class="select-wrap">
-                <select id="month" required>
-                  <option value="1">Enero (January)</option>
-                  <option value="2">Pebrero (February)</option>
-                  <option value="3">Marso (March)</option>
-                  <option value="4">Abril (April)</option>
-                  <option value="5">Mayo (May)</option>
-                  <option value="6">Hunyo (June)</option>
-                </select>
-                <span class="chevron">▾</span>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="hour"
-                >Oras <span class="hint">(6 AM – 8 PM)</span></label
+            <div class="chart-legend" id="trend-legend"></div>
+            <div class="chart-wrap">
+              <canvas
+                id="trendChart"
+                role="img"
+                aria-label="Line chart of sales forecast history"
+                >No data yet.</canvas
               >
-              <input
-                type="number"
-                id="hour"
-                min="6"
-                max="20"
-                value="8"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="unit_price">
-                Unit Price <span class="hint">(₱)</span>
-              </label>
-              <input
-                type="number"
-                id="unit_price"
-                step="0.01"
-                placeholder="Pumili ng kategorya muna"
-                disabled
-              />
-              <div id="price-hint" class="price-hint" hidden></div>
             </div>
           </div>
 
-          <button type="submit" id="predict-btn">
-            <span class="btn-text">Hulaan ang Kabuuang Benta</span>
-            <span class="btn-loader" hidden>Nag-aanalisa…</span>
-          </button>
-        </form>
+          <div class="panel panel--narrow">
+            <div class="panel-header">
+              <span class="panel-title"
+                >Output (y) Breakdown by Product Category</span
+              >
+            </div>
+            <div class="cat-list" id="cat-list">
+              <p class="empty-state">
+                Run a forecast to see the category breakdown.
+              </p>
+            </div>
+          </div>
+        </section>
 
-        <div id="result-box" class="result-box" hidden>
-          <div class="result-label">Inaasahang Kabuuang Benta</div>
-          <div id="predicted-value" class="result-value">₱0.00</div>
-          <div class="result-note">Batay sa iyong mga piniling kondisyon</div>
-        </div>
+        <section class="panel form-panel">
+          <div class="panel-header">
+            <div class="panel-title-wrap">
+              <i class="ti ti-sparkles panel-title-icon"></i>
+              <span class="panel-title">Configure Input Features (X)</span>
+            </div>
+          </div>
 
-        <div id="error-box" class="error-box" hidden>
-          <span>⚠️</span>
-          <span id="error-msg">Nagkaroon ng error sa pag-predict.</span>
+          <form id="prediction-form" novalidate>
+            <div class="fields-grid">
+              <div class="form-group">
+                <label for="store_location"
+                  >Store Location
+                  <span class="hint" style="color: #6366f1"
+                    >[X Feature]</span
+                  ></label
+                >
+                <div class="select-wrap">
+                  <select id="store_location" required>
+                    <option value="Lower Manhattan">Lower Manhattan</option>
+                    <option value="Hell's Kitchen">Hell's Kitchen</option>
+                    <option value="Astoria">Astoria</option>
+                  </select>
+                  <i class="ti ti-chevron-down chevron"></i>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="product_category"
+                  >Product Category
+                  <span class="hint" style="color: #6366f1"
+                    >[X Feature]</span
+                  ></label
+                >
+                <div class="select-wrap">
+                  <select id="product_category" required>
+                    <option value="">— Select a category —</option>
+                    <option value="Bakery">Bakery</option>
+                    <option value="Branded">Branded</option>
+                    <option value="Coffee">Coffee</option>
+                    <option value="Coffee beans">Coffee Beans</option>
+                    <option value="Drinking Chocolate">
+                      Drinking Chocolate
+                    </option>
+                    <option value="Flavours">Flavours</option>
+                    <option value="Loose Tea">Loose Tea</option>
+                    <option value="Packaged Chocolate">
+                      Packaged Chocolate
+                    </option>
+                    <option value="Tea">Tea</option>
+                  </select>
+                  <i class="ti ti-chevron-down chevron"></i>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="day_of_week"
+                  >Day of Week
+                  <span class="hint" style="color: #6366f1"
+                    >[X Feature]</span
+                  ></label
+                >
+                <div class="select-wrap">
+                  <select id="day_of_week" required>
+                    <option value="0">Monday</option>
+                    <option value="1">Tuesday</option>
+                    <option value="2">Wednesday</option>
+                    <option value="3">Thursday</option>
+                    <option value="4">Friday</option>
+                    <option value="5">Saturday</option>
+                    <option value="6">Sunday</option>
+                  </select>
+                  <i class="ti ti-chevron-down chevron"></i>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="month"
+                  >Month
+                  <span class="hint" style="color: #6366f1"
+                    >[X Feature]</span
+                  ></label
+                >
+                <div class="select-wrap">
+                  <select id="month" required>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                  </select>
+                  <i class="ti ti-chevron-down chevron"></i>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="hour"
+                  >Hour
+                  <span class="hint" style="color: #6366f1">[X Feature]</span>
+                  <span class="hint">6 AM – 8 PM</span></label
+                >
+                <input
+                  type="number"
+                  id="hour"
+                  min="6"
+                  max="20"
+                  value="8"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="unit_price"
+                  >Unit Price
+                  <span class="hint" style="color: #6366f1">[X Feature]</span>
+                  <span class="hint">₱</span></label
+                >
+                <input
+                  type="number"
+                  id="unit_price"
+                  step="0.01"
+                  placeholder="Select a category first"
+                  disabled
+                />
+                <div id="price-hint" class="price-hint"></div>
+              </div>
+            </div>
+
+            <button type="submit" id="predict-btn">
+              <i class="ti ti-cpu"></i>
+              <span class="btn-text">Predict Target Output (y)</span>
+              <span class="btn-loader" hidden>Analyzing Features…</span>
+            </button>
+          </form>
+        </section>
+
+        <section id="result-box" class="result-section" style="display: none">
+          <div class="result-card result-card--main">
+            <div class="result-label">Predicted Target Value (y)</div>
+            <div id="predicted-value" class="result-value">₱0.00</div>
+            <div class="result-note">
+              Calculated total_sales_amount based on X input matrix
+            </div>
+          </div>
+          <div class="result-card result-card--meta" id="result-meta-card">
+            <div class="result-label">Fed Input Features (X)</div>
+            <div class="result-meta-list" id="result-meta-list"></div>
+          </div>
+        </section>
+
+        <div id="error-box" class="error-box" style="display: none">
+          <i class="ti ti-alert-circle"></i>
+          <span id="error-msg"></span>
         </div>
-      </div>
+      </main>
     </div>
 
     <script src="script.js"></script>
+    <script src="dashboard.js"></script>
   </body>
 </html>
