@@ -14,7 +14,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* === Page background === */
+/* Page background */
 .page-bg {
   min-height: 100vh;
   background: linear-gradient(160deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
@@ -25,7 +25,7 @@ body {
   padding: 2rem 3rem;
 }
 
-/* === Left panel === */
+/* Left panel*/
 .left-panel {
   flex: 1;
   max-width: 420px;
@@ -84,7 +84,7 @@ body {
   flex-shrink: 0;
 }
 
-/* === Card header === */
+/* Card header */
 .card-header {
   text-align: left;
   margin-bottom: 1.75rem;
@@ -114,7 +114,7 @@ body {
   color: rgba(226, 232, 240, 0.45);
 }
 
-/* === Form groups === */
+/* Form groups*/
 .form-group {
   margin-bottom: 1rem;
 }
@@ -152,7 +152,7 @@ body {
   background: rgba(255, 255, 255, 0.08);
 }
 
-/* === Submit button === */
+/* Submit button*/
 #login-btn {
   width: 100%;
   margin-top: 1.5rem;
@@ -218,7 +218,7 @@ body {
   font-size: 13px;
 }
 
-/* === Error box === */
+/* Error box */
 .error-box {
   display: flex;
   align-items: center;
