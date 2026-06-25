@@ -1,0 +1,423 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap");
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --espresso: #2c1a0e;
+  --mahogany: #6f3520;
+  --caramel: #c8813a;
+  --cream: #f5ede0;
+  --milk: #fdfaf6;
+  --sage: #4a7c59;
+  --fog: #9e8878;
+  --border: #ddd0c2;
+  --radius: 10px;
+  --shadow: 0 8px 32px rgba(44, 26, 14, 0.12);
+}
+
+/* ── Page ── */
+body {
+  background-color: var(--cream);
+  font-family: "Inter", sans-serif;
+  color: var(--espresso);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.page-bg {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+}
+
+/* ── Steam animation ── */
+.steam-wrap {
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.steam {
+  display: block;
+  width: 6px;
+  border-radius: 50px;
+  background: linear-gradient(to top, var(--caramel), transparent);
+  animation: rise 2.4s ease-in-out infinite;
+  opacity: 0;
+}
+
+.steam.s1 {
+  height: 22px;
+  animation-delay: 0s;
+}
+.steam.s2 {
+  height: 32px;
+  animation-delay: 0.6s;
+}
+.steam.s3 {
+  height: 20px;
+  animation-delay: 1.2s;
+}
+
+@keyframes rise {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scaleX(1);
+  }
+  30% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-28px) scaleX(1.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .steam {
+    animation: none;
+  }
+}
+
+/* ── Card ── */
+.card {
+  background: var(--milk);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 40px 36px 36px;
+  border-top: 4px solid var(--caramel);
+}
+
+/* ── Header ── */
+.card-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.cup-icon {
+  font-size: 2.4rem;
+  margin-bottom: 8px;
+}
+
+.card-header h1 {
+  font-family: "Playfair Display", serif;
+  font-size: 2rem;
+  line-height: 1.15;
+  color: var(--espresso);
+  letter-spacing: -0.02em;
+}
+
+.accent {
+  color: var(--caramel);
+}
+
+.subtitle {
+  margin-top: 8px;
+  font-size: 0.82rem;
+  color: var(--fog);
+  letter-spacing: 0.01em;
+}
+
+/* ── Form grid ── */
+.fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--mahogany);
+}
+
+.hint {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--fog);
+  font-size: 0.75rem;
+}
+
+/* ── Select ── */
+.select-wrap {
+  position: relative;
+}
+
+.select-wrap select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  padding: 10px 32px 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: white;
+  font-family: "Inter", sans-serif;
+  font-size: 0.9rem;
+  color: var(--espresso);
+  cursor: pointer;
+  transition:
+    border-color 0.18s,
+    box-shadow 0.18s;
+}
+
+.select-wrap select:focus {
+  outline: none;
+  border-color: var(--caramel);
+  box-shadow: 0 0 0 3px rgba(200, 129, 58, 0.18);
+}
+
+.chevron {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.85rem;
+  color: var(--fog);
+  pointer-events: none;
+}
+
+/* ── Number inputs ── */
+input[type="number"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: white;
+  font-family: "Inter", sans-serif;
+  font-size: 0.9rem;
+  color: var(--espresso);
+  transition:
+    border-color 0.18s,
+    box-shadow 0.18s;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 0.4;
+}
+
+input[type="number"]:disabled {
+  background: #f0ebe5;
+  color: var(--fog);
+  cursor: not-allowed;
+  border-color: var(--border);
+}
+
+input[type="number"]:focus {
+  outline: none;
+  border-color: var(--caramel);
+  box-shadow: 0 0 0 3px rgba(200, 129, 58, 0.18);
+}
+
+/* ── Price range badge ── */
+.price-range-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  background: rgba(200, 129, 58, 0.12);
+  border: 1px solid rgba(200, 129, 58, 0.35);
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--mahogany);
+  letter-spacing: 0.02em;
+  margin-top: 2px;
+  animation: fadeIn 0.25s ease;
+}
+
+.price-range-badge::before {
+  content: "📊";
+  font-size: 0.7rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Submit button ── */
+button[type="submit"] {
+  width: 100%;
+  padding: 14px;
+  background: var(--mahogany);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-family: "Inter", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.1s,
+    box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(111, 53, 32, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+button[type="submit"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.4s;
+}
+
+button[type="submit"]:hover {
+  background: var(--espresso);
+  box-shadow: 0 6px 18px rgba(44, 26, 14, 0.35);
+}
+
+button[type="submit"]:hover::after {
+  transform: translateX(100%);
+}
+
+button[type="submit"]:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px rgba(44, 26, 14, 0.2);
+}
+
+button[type="submit"]:focus-visible {
+  outline: 3px solid var(--caramel);
+  outline-offset: 2px;
+}
+
+button[type="submit"]:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Result box ── */
+.result-box {
+  margin-top: 24px;
+  padding: 24px 20px;
+  background: linear-gradient(135deg, #eef7f1, #dff0e6);
+  border-left: 5px solid var(--sage);
+  border-radius: var(--radius);
+  text-align: center;
+  animation: slideIn 0.35s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--sage);
+  margin-bottom: 6px;
+}
+
+.result-value {
+  font-family: "Playfair Display", serif;
+  font-size: 2.4rem;
+  color: var(--sage);
+  line-height: 1;
+}
+
+.result-note {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--fog);
+}
+
+/* ── Error box ── */
+.error-box {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #fef2f2;
+  border-left: 4px solid #c0392b;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  color: #7b1d1d;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  animation: slideIn 0.25s ease;
+}
+
+/* Ensure [hidden] always wins over display:flex/block */
+[hidden] {
+  display: none !important;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .card {
+    padding: 28px 20px 24px;
+  }
+
+  .fields-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-header h1 {
+    font-size: 1.65rem;
+  }
+}
+
+/* ── Price hint pill ── */
+.price-hint {
+  margin-top: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--caramel);
+  background: rgba(200, 129, 58, 0.1);
+  border: 1px solid rgba(200, 129, 58, 0.25);
+  border-radius: 20px;
+  padding: 3px 10px;
+  display: inline-block;
+  animation: fadeIn 0.2s ease;
+}

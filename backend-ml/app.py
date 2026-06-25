@@ -4,7 +4,7 @@ import pandas as pd
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Para payagan ang koneksyon mula sa Node.js server
+CORS(app)  # Para payagan ang koneksyon mula sa frontend/Node.js server
 
 # I-load ang trained model at mga columns
 with open('coffee_model.pkl', 'rb') as f:
@@ -40,10 +40,19 @@ def predict():
         # Isagawa ang prediksyon
         prediction = model.predict(input_data)[0]
         
-        return jsonify({'success': True, 'predicted_sales': round(prediction, 2)})
+       
+        return jsonify({
+            'success': True, 
+            'predicted_sales': round(prediction, 2),
+            'message': 'Prediction successful'
+        })
         
     except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+       
+        return jsonify({
+            'success': False, 
+            'message': str(e)
+        })
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)

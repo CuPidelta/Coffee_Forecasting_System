@@ -4,167 +4,137 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Coffee Shop Demand Forecaster</title>
-    <style>
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f5f0eb;
-        color: #4a3b32;
-        padding: 30px;
-      }
-      .container {
-        max-width: 600px;
-        margin: 0 auto;
-        background: white;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      }
-      h2 {
-        text-align: center;
-        color: #6f4e37;
-      }
-      .form-group {
-        margin-bottom: 15px;
-      }
-      label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-      }
-      select,
-      input {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #c2b2a2;
-        border-radius: 6px;
-        box-sizing: border-box;
-      }
-      button {
-        width: 100%;
-        padding: 12px;
-        background-color: #6f4e37;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-size: 16px;
-        cursor: pointer;
-        font-weight: bold;
-      }
-      button:hover {
-        background-color: #553c29;
-      }
-      #result-box {
-        margin-top: 20px;
-        padding: 15px;
-        background: #e8f5e9;
-        border-left: 5px solid #2e7d32;
-        display: none;
-        border-radius: 4px;
-        text-align: center;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="container">
-      <h2>☕ Coffee Shop Sales Demand Forecaster</h2>
-      <p style="text-align: center; font-size: 14px">
-        Machine Learning Prediction Engine
-      </p>
+    <div class="page-bg">
+      <div class="steam-wrap" aria-hidden="true">
+        <span class="steam s1"></span>
+        <span class="steam s2"></span>
+        <span class="steam s3"></span>
+      </div>
 
-      <form id="prediction-form">
-        <div class="form-group">
-          <label>Store Location:</label>
-          <select id="store_location" required>
-            <option value="Lower Manhattan">Lower Manhattan</option>
-            <option value="Hell's Kitchen">Hell's Kitchen</option>
-            <option value="Astoria">Astoria</option>
-          </select>
+      <div class="card">
+        <header class="card-header">
+          <div class="cup-icon">☕</div>
+          <h1>Sales Demand<br /><span class="accent">Forecaster</span></h1>
+          <p class="subtitle">
+            AI-powered prediction engine para sa iyong coffee shop
+          </p>
+        </header>
+
+        <form id="prediction-form" novalidate>
+          <div class="fields-grid">
+            <div class="form-group">
+              <label for="store_location">Store Location</label>
+              <div class="select-wrap">
+                <select id="store_location" required>
+                  <option value="Lower Manhattan">Lower Manhattan</option>
+                  <option value="Hell's Kitchen">Hell's Kitchen</option>
+                  <option value="Astoria">Astoria</option>
+                </select>
+                <span class="chevron">▾</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="product_category">Product Category</label>
+              <div class="select-wrap">
+                <select id="product_category" required>
+                  <option value="">— Pumili ng kategorya —</option>
+                  <option value="Bakery">Bakery</option>
+                  <option value="Branded">Branded</option>
+                  <option value="Coffee">Coffee</option>
+                  <option value="Coffee beans">Coffee Beans</option>
+                  <option value="Drinking Chocolate">Drinking Chocolate</option>
+                  <option value="Flavours">Flavours</option>
+                  <option value="Loose Tea">Loose Tea</option>
+                  <option value="Packaged Chocolate">Packaged Chocolate</option>
+                  <option value="Tea">Tea</option>
+                </select>
+                <span class="chevron">▾</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="day_of_week">Araw ng Linggo</label>
+              <div class="select-wrap">
+                <select id="day_of_week" required>
+                  <option value="0">Lunes (Monday)</option>
+                  <option value="1">Martes (Tuesday)</option>
+                  <option value="2">Miyerkules (Wednesday)</option>
+                  <option value="3">Huwebes (Thursday)</option>
+                  <option value="4">Biyernes (Friday)</option>
+                  <option value="5">Sabado (Saturday)</option>
+                  <option value="6">Linggo (Sunday)</option>
+                </select>
+                <span class="chevron">▾</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="month">Buwan</label>
+              <div class="select-wrap">
+                <select id="month" required>
+                  <option value="1">Enero (January)</option>
+                  <option value="2">Pebrero (February)</option>
+                  <option value="3">Marso (March)</option>
+                  <option value="4">Abril (April)</option>
+                  <option value="5">Mayo (May)</option>
+                  <option value="6">Hunyo (June)</option>
+                </select>
+                <span class="chevron">▾</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="hour"
+                >Oras <span class="hint">(6 AM – 8 PM)</span></label
+              >
+              <input
+                type="number"
+                id="hour"
+                min="6"
+                max="20"
+                value="8"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="unit_price">
+                Unit Price <span class="hint">(₱)</span>
+              </label>
+              <input
+                type="number"
+                id="unit_price"
+                step="0.01"
+                placeholder="Pumili ng kategorya muna"
+                disabled
+              />
+              <div id="price-hint" class="price-hint" hidden></div>
+            </div>
+          </div>
+
+          <button type="submit" id="predict-btn">
+            <span class="btn-text">Hulaan ang Kabuuang Benta</span>
+            <span class="btn-loader" hidden>Nag-aanalisa…</span>
+          </button>
+        </form>
+
+        <div id="result-box" class="result-box" hidden>
+          <div class="result-label">Inaasahang Kabuuang Benta</div>
+          <div id="predicted-value" class="result-value">₱0.00</div>
+          <div class="result-note">Batay sa iyong mga piniling kondisyon</div>
         </div>
 
-        <div class="form-group">
-          <label>Product Category:</label>
-          <select id="product_category" required>
-            <option value="Coffee">Coffee</option>
-            <option value="Tea">Tea</option>
-            <option value="Drinking Chocolate">Drinking Chocolate</option>
-            <option value="Bakery">Bakery</option>
-          </select>
+        <div id="error-box" class="error-box" hidden>
+          <span>⚠️</span>
+          <span id="error-msg">Nagkaroon ng error sa pag-predict.</span>
         </div>
-
-        <div class="form-group">
-          <label>Day of the Week:</label>
-          <select id="day_of_week" required>
-            <option value="0">Monday</option>
-            <option value="2">Wednesday</option>
-            <option value="5">Saturday</option>
-            <option value="6">Sunday</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Month:</label>
-          <select id="month" required>
-            <option value="1">January</option>
-            <option value="6">June</option>
-            <option value="12">December</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Hour of the Day (24-hour format):</label>
-          <input type="number" id="hour" min="6" max="20" value="8" required />
-        </div>
-
-        <div class="form-group">
-          <label>Estimated Unit Price (₱):</label>
-          <input
-            type="number"
-            id="unit_price"
-            step="0.1"
-            value="3.5"
-            required
-          />
-        </div>
-
-        <button type="submit">HULAAN ANG TOTAL DEMAND BENTA</button>
-      </form>
-
-      <div id="result-box">
-        <h3 id="predicted-value">Predicted Sales: ₱0.00</h3>
       </div>
     </div>
 
-    <script>
-      document
-        .getElementById("prediction-form")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-
-          const payload = {
-            store_location: document.getElementById("store_location").value,
-            product_category: document.getElementById("product_category").value,
-            day_of_week: document.getElementById("day_of_week").value,
-            month: document.getElementById("month").value,
-            hour: document.getElementById("hour").value,
-            unit_price: document.getElementById("unit_price").value,
-          };
-
-          // Direktang i-fetch sa Flask ML Server
-          const response = await fetch("http://localhost:5000/predict", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-
-          const data = await response.json();
-          if (data.success) {
-            document.getElementById("result-box").style.display = "block";
-            document.getElementById("predicted-value").innerText =
-              `Inaasahang Kabuuang Benta: $${data.predicted_sales}`;
-          } else {
-            alert("Nagkaroon ng error sa pag-predict.");
-          }
-        });
-    </script>
+    <script src="script.js"></script>
   </body>
 </html>
