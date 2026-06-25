@@ -1,4 +1,4 @@
-// ── Price ranges per category (min, max from CSV data) ──────
+// ── Price ranges per category (min, max from CSV data)
 const PRICE_RANGES = {
   Bakery: { min: 2.65, max: 5.63, default: 3.5 },
   Branded: { min: 12.0, max: 28.0, default: 15.0 },
@@ -11,14 +11,12 @@ const PRICE_RANGES = {
   Tea: { min: 2.5, max: 4.0, default: 3.0 },
 };
 
-// ── Init: make sure error/result boxes are hidden on load ────
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("result-box").hidden = true;
   document.getElementById("error-box").hidden = true;
   document.getElementById("price-hint").hidden = true;
 });
 
-// ── DOM refs ─────────────────────────────────────────────────
 const form = document.getElementById("prediction-form");
 const categoryEl = document.getElementById("product_category");
 const priceEl = document.getElementById("unit_price");
@@ -31,7 +29,6 @@ const resultValue = document.getElementById("predicted-value");
 const errorBox = document.getElementById("error-box");
 const errorMsg = document.getElementById("error-msg");
 
-// ── Auto-fill price range when category changes ───────────────
 categoryEl.addEventListener("change", () => {
   const cat = categoryEl.value;
   const range = PRICE_RANGES[cat];
@@ -60,7 +57,6 @@ categoryEl.addEventListener("change", () => {
   priceHint.hidden = false;
 });
 
-// ── Form submit ───────────────────────────────────────────────
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -128,7 +124,7 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-// ── Helpers ───────────────────────────────────────────────────
+// Helpers
 function setLoading(loading) {
   btn.disabled = loading;
   btnText.hidden = loading;
