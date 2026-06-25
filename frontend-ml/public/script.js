@@ -108,7 +108,6 @@ if (form) {
         resultValue.textContent = formatted;
         showResult();
 
-        // Tinatawag nito ang function na nasa dashboard.js para i-update ang mga graph at tables
         if (typeof window.showResult === "function") {
           window.showResult(formatted, {
             location: locationEl.value,
