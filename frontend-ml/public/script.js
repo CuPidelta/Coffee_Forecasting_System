@@ -22,7 +22,7 @@ const resultValue = document.getElementById("predicted-value");
 const errorBox = document.getElementById("error-box");
 const errorMsg = document.getElementById("error-msg");
 
-// ── Category → price range ─────────────────────────────────
+// Category → price range
 if (categoryEl) {
   categoryEl.addEventListener("change", () => {
     const cat = categoryEl.value;
@@ -53,7 +53,7 @@ if (categoryEl) {
   });
 }
 
-// ── Manual form submit → single prediction ─────────────────
+// Manual form submit → single prediction
 if (form) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -139,7 +139,7 @@ if (form) {
   });
 }
 
-// ── Helpers ────────────────────────────────────────────────
+// Helpers
 function setLoading(loading) {
   if (!btn || !btnText || !btnLoader) return;
   btn.disabled = loading;
