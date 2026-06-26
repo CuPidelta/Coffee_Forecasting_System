@@ -6,23 +6,23 @@ const analyticsState = {
 
 //  (STORE BRANCHES)
 const STORE_COLORS = {
-  "Lower Manhattan": "#5c62f5", // Vibrant Electric Indigo
-  "Hell's Kitchen": "#f59e0b", // High-Visibility Amber/Orange
-  Astoria: "#10b981", // Bright Neon Emerald Green
+  "Lower Manhattan": "#5c62f5",
+  "Hell's Kitchen": "#f59e0b",
+  Astoria: "#10b981",
 };
 const DEFAULT_COLOR = "#94a3b8";
 
 //  (PRODUCT CATEGORIES)
 const CAT_COLORS = {
-  Coffee: "#6366f1", // Vivid Indigo
-  Tea: "#06b6d4", // Bright Cyan/Sky Blue
-  Bakery: "#d946ef", // Vibrant Magenta/Pink
-  Branded: "#3b82f6", // Crisp Royal Blue
-  "Coffee beans": "#a855f7", // Neon Purple
-  "Drinking Chocolate": "#f97316", // Flame Orange
-  Flavours: "#ec4899", // Hot Pink
-  "Loose Tea": "#84cc16", // Lime Green
-  "Packaged Chocolate": "#14b8a6", // Bright Teal
+  Coffee: "#6366f1",
+  Tea: "#06b6d4",
+  Bakery: "#d946ef",
+  Branded: "#3b82f6",
+  "Coffee beans": "#a855f7",
+  "Drinking Chocolate": "#f97316",
+  Flavours: "#ec4899",
+  "Loose Tea": "#84cc16",
+  "Packaged Chocolate": "#14b8a6",
 };
 
 // STEP 1: Initialization of Graph (Chart.js)
@@ -39,7 +39,7 @@ function initTrendChart() {
         legend: {
           display: true,
           labels: {
-            color: "#ffffff", // Pure white text para sa legend box labels
+            color: "#ffffff",
             font: { size: 12, weight: "bold" },
             boxWidth: 15,
             generateLabels: (chart) => {
@@ -78,6 +78,9 @@ function initTrendChart() {
                   ` Date [X]: ${rawData.month}, ${rawData.day} (${rawData.hour}:00)`,
                   ` Price [X]: ₱${Number(rawData.price).toFixed(2)}`,
                   ` Pred Yield [y]: ₱${Number(rawData.value).toLocaleString("en-PH", { minimumFractionDigits: 2 })}`,
+                  rawData.source === "csv"
+                    ? " [via CSV Batch]"
+                    : " [via Manual Form]",
                 ];
               }
               return (
@@ -126,79 +129,113 @@ function initTrendChart() {
   });
 }
 
-// STEP 2: Update UI State, Group Datasets (Connected Lines by Store, Point Node Colors by Category)
+// STEP 2: Update UI State, Group Datasets
+// source: "manual" | "csv"
 function updateAnalytics(predictedValue, category, hour, detailedMeta = {}) {
-  const label = "Run #" + (analyticsState.forecasts.length + 1);
+  const source = detailedMeta.source || "manual";
+  const label =
+    source === "csv"
+      ? `CSV #${analyticsState.forecasts.filter((f) => f.source === "csv").length + 1}`
+      : "Run #" + (analyticsState.forecasts.length + 1);
 
   analyticsState.forecasts.push({
     label,
     value: predictedValue,
     category,
-    hour: hour,
+    hour,
     location: detailedMeta.location || "—",
     day: detailedMeta.day || "—",
     month: detailedMeta.month || "—",
     price: detailedMeta.price || 0,
+    source,
   });
 
   analyticsState.catTotals[category] =
     (analyticsState.catTotals[category] || 0) + predictedValue;
 
-  const total = analyticsState.forecasts.reduce((s, f) => s + f.value, 0);
-  const avg = total / analyticsState.forecasts.length;
+  refreshDashboard();
+}
+
+// STEP 2b: Accept an array of results at once (CSV batch — single chart.update call)
+function updateAnalyticsBatch(rows) {
+  rows.forEach(({ predictedValue, category, hour, meta }) => {
+    const source = "csv";
+    const label = `CSV #${analyticsState.forecasts.filter((f) => f.source === "csv").length + 1}`;
+
+    analyticsState.forecasts.push({
+      label,
+      value: predictedValue,
+      category,
+      hour,
+      location: meta.location || "—",
+      day: meta.day || "—",
+      month: meta.month || "—",
+      price: meta.price || 0,
+      source,
+    });
+
+    analyticsState.catTotals[category] =
+      (analyticsState.catTotals[category] || 0) + predictedValue;
+  });
+
+  refreshDashboard();
+}
+
+function refreshDashboard() {
+  const forecasts = analyticsState.forecasts;
+  if (!forecasts.length) return;
+
+  const total = forecasts.reduce((s, f) => s + f.value, 0);
+  const avg = total / forecasts.length;
   const topCat = Object.entries(analyticsState.catTotals).sort(
     (a, b) => b[1] - a[1],
   )[0];
-  const peakForecast = [...analyticsState.forecasts].sort(
-    (a, b) => b.value - a.value,
-  )[0];
+  const peakForecast = [...forecasts].sort((a, b) => b.value - a.value)[0];
 
-  // Update UI KPI Cards
-  const statTotal = document.getElementById("stat-total");
-  const statTotalSub = document.getElementById("stat-total-sub");
-  const statAvg = document.getElementById("stat-avg");
-  const statCountSub = document.getElementById("stat-count-sub");
-  const statTopCat = document.getElementById("stat-top-cat");
-  const statTopVal = document.getElementById("stat-top-val");
-  const statPeakHour = document.getElementById("stat-peak-hour");
-  const statPeakSub = document.getElementById("stat-peak-sub");
+  // KPI cards
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  };
 
-  if (statTotal)
-    statTotal.textContent =
-      "₱" + total.toLocaleString("en-PH", { minimumFractionDigits: 2 });
-  if (statTotalSub)
-    statTotalSub.textContent =
-      analyticsState.forecasts.length + " model run(s) recorded";
-  if (statAvg)
-    statAvg.textContent =
-      "₱" + avg.toLocaleString("en-PH", { minimumFractionDigits: 2 });
-  if (statCountSub)
-    statCountSub.textContent =
-      analyticsState.forecasts.length + " total predictions (y)";
-  if (statTopCat) statTopCat.textContent = topCat ? topCat[0] : "—";
-  if (statTopVal)
-    statTopVal.textContent = topCat
+  set(
+    "stat-total",
+    "₱" + total.toLocaleString("en-PH", { minimumFractionDigits: 2 }),
+  );
+  set("stat-total-sub", forecasts.length + " model run(s) recorded");
+  set(
+    "stat-avg",
+    "₱" + avg.toLocaleString("en-PH", { minimumFractionDigits: 2 }),
+  );
+  set("stat-count-sub", forecasts.length + " total predictions (y)");
+  set("stat-top-cat", topCat ? topCat[0] : "—");
+  set(
+    "stat-top-val",
+    topCat
       ? "Total y: ₱" +
-        topCat[1].toLocaleString("en-PH", { minimumFractionDigits: 2 })
-      : "";
-  if (statPeakHour)
-    statPeakHour.textContent = peakForecast ? peakForecast.hour + ":00" : "—";
-  if (statPeakSub)
-    statPeakSub.textContent = peakForecast
+          topCat[1].toLocaleString("en-PH", { minimumFractionDigits: 2 })
+      : "",
+  );
+  set("stat-peak-hour", peakForecast ? peakForecast.hour + ":00" : "—");
+  set(
+    "stat-peak-sub",
+    peakForecast
       ? "Max y: ₱" +
-        peakForecast.value.toLocaleString("en-PH", { minimumFractionDigits: 2 })
-      : "";
+          peakForecast.value.toLocaleString("en-PH", {
+            minimumFractionDigits: 2,
+          })
+      : "",
+  );
 
-  // Update Graph Engine (Linear Unbroken Point Linking Strategy)
+  // Trend chart
   const chart = analyticsState.trendChart;
   if (chart) {
     const storeDatasets = {};
     const storeCounters = {};
 
-    analyticsState.forecasts.forEach((f) => {
+    forecasts.forEach((f) => {
       const loc = f.location;
-      const cat = f.category;
-      const categoryColor = CAT_COLORS[cat] || DEFAULT_COLOR;
+      const categoryColor = CAT_COLORS[f.category] || DEFAULT_COLOR;
 
       if (!storeDatasets[loc]) {
         storeCounters[loc] = 0;
@@ -220,15 +257,12 @@ function updateAnalytics(predictedValue, category, hour, detailedMeta = {}) {
       }
 
       storeCounters[loc] += 1;
-
-      storeDatasets[loc].data.push({
-        x: storeCounters[loc],
-        y: f.value,
-      });
-
+      storeDatasets[loc].data.push({ x: storeCounters[loc], y: f.value });
       storeDatasets[loc].pointBackgroundColor.push(categoryColor);
-      storeDatasets[loc].pointBorderColor.push("#ffffff"); // Isolation contrast stroke
-
+      // CSV rows get a distinct point border to distinguish them visually
+      storeDatasets[loc].pointBorderColor.push(
+        f.source === "csv" ? "#facc15" : "#ffffff",
+      );
       storeDatasets[loc].rawObjects.push(f);
     });
 
@@ -238,14 +272,15 @@ function updateAnalytics(predictedValue, category, hour, detailedMeta = {}) {
 
   const chartHint = document.getElementById("chart-hint");
   if (chartHint) {
-    chartHint.textContent =
-      analyticsState.forecasts.length + " target output values (y) recorded";
+    const csvCount = forecasts.filter((f) => f.source === "csv").length;
+    const manualCount = forecasts.filter((f) => f.source === "manual").length;
+    const parts = [];
+    if (manualCount) parts.push(`${manualCount} manual`);
+    if (csvCount) parts.push(`${csvCount} via CSV`);
+    chartHint.textContent = `${forecasts.length} prediction(s) recorded (${parts.join(", ")})`;
   }
 
-  const legendEl = document.getElementById("trend-legend");
-  if (legendEl) legendEl.innerHTML = "";
-
-  // Update Category Progress bars list
+  // Category bars
   const catList = document.getElementById("cat-list");
   if (catList) {
     const sorted = Object.entries(analyticsState.catTotals).sort(
@@ -257,40 +292,48 @@ function updateAnalytics(predictedValue, category, hour, detailedMeta = {}) {
         const pct = Math.round((val / maxVal) * 100);
         const color = CAT_COLORS[cat] || DEFAULT_COLOR;
         return `<div class="cat-bar-item">
-        <div class="cat-bar-name" style="font-weight: 600;">${cat}</div>
-        <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${pct}%;background:${color};box-shadow: 0 0 4px ${color};"></div></div>
-        <div class="cat-bar-val" style="font-weight: bold; color: #ffffff;">₱${val.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</div>
-      </div>`;
+          <div class="cat-bar-name" style="font-weight:600;">${cat}</div>
+          <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${pct}%;background:${color};box-shadow:0 0 4px ${color};"></div></div>
+          <div class="cat-bar-val" style="font-weight:bold;color:#ffffff;">₱${val.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</div>
+        </div>`;
       })
       .join("");
   }
 }
 
-// Global window event triggered upon a successful API submission from script.js
+// Global: triggered by script.js after a successful manual prediction
 window.showResult = function (value, formData) {
   const meta = document.getElementById("result-meta-list");
   if (meta && formData) {
     meta.innerHTML = `
-      <div class="meta-row"><span>Store Location [X]</span><span style="color:#ffffff; font-weight:bold;">${formData.location || "—"}</span></div>
-      <div class="meta-row"><span>Product Category [X]</span><span style="color:#ffffff; font-weight:bold;">${formData.category || "—"}</span></div>
-      <div class="meta-row"><span>Day of Week [X]</span><span style="color:#ffffff; font-weight:bold;">${formData.day || "—"}</span></div>
-      <div class="meta-row"><span>Month [X]</span><span style="color:#ffffff; font-weight:bold;">${formData.month || "—"}</span></div>
-      <div class="meta-row"><span>Hour [X]</span><span style="color:#ffffff; font-weight:bold;">${formData.hour || "—"}</span></div>
-      <div class="meta-row"><span>Unit Price [X]</span><span style="color:#ffffff; font-weight:bold;">₱${Number(formData.price || 0).toFixed(2)}</span></div>
+      <div class="meta-row"><span>Store Location [X]</span><span style="color:#ffffff;font-weight:bold;">${formData.location || "—"}</span></div>
+      <div class="meta-row"><span>Product Category [X]</span><span style="color:#ffffff;font-weight:bold;">${formData.category || "—"}</span></div>
+      <div class="meta-row"><span>Day of Week [X]</span><span style="color:#ffffff;font-weight:bold;">${formData.day || "—"}</span></div>
+      <div class="meta-row"><span>Month [X]</span><span style="color:#ffffff;font-weight:bold;">${formData.month || "—"}</span></div>
+      <div class="meta-row"><span>Hour [X]</span><span style="color:#ffffff;font-weight:bold;">${formData.hour || "—"}</span></div>
+      <div class="meta-row"><span>Unit Price [X]</span><span style="color:#ffffff;font-weight:bold;">₱${Number(formData.price || 0).toFixed(2)}</span></div>
     `;
   }
+
   const numVal = parseFloat(String(value).replace(/[^0-9.]/g, ""));
   const cat = document.getElementById("product_category").value;
   const hr = parseInt(document.getElementById("hour").value);
-  if (!isNaN(numVal)) updateAnalytics(numVal, cat, hr, formData);
+
+  if (!isNaN(numVal)) {
+    updateAnalytics(numVal, cat, hr, { ...formData, source: "manual" });
+  }
 };
 
-// STEP 3: Excel Report Spreadsheet Generation (SheetJS XLSX)
+// Global: called by csv-upload.js after all batch rows are done
+window.showBatchResults = function (batchRows) {
+  if (!Array.isArray(batchRows) || !batchRows.length) return;
+  updateAnalyticsBatch(batchRows);
+};
+
+// STEP 3: Excel Report Export (SheetJS)
 function exportToExcel() {
   if (analyticsState.forecasts.length === 0) {
-    alert(
-      "Please run at least one forecast prediction before trying to export data.",
-    );
+    alert("Please run at least one forecast prediction before exporting.");
     return;
   }
 
@@ -324,6 +367,7 @@ function exportToExcel() {
   const detailedData = [
     [
       "Forecast Reference ID",
+      "Source",
       "Store Location [Input Feature X]",
       "Product Category [Input Feature X]",
       "Target Calendar Month [Input Feature X]",
@@ -336,6 +380,7 @@ function exportToExcel() {
   analyticsState.forecasts.forEach((f) => {
     detailedData.push([
       f.label,
+      f.source === "csv" ? "CSV Batch" : "Manual Form",
       f.location,
       f.category,
       f.month,
@@ -347,50 +392,50 @@ function exportToExcel() {
   });
 
   const wb = XLSX.utils.book_new();
-
-  const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
-  const wsCategory = XLSX.utils.aoa_to_sheet(categoryData);
-  const wsDetailed = XLSX.utils.aoa_to_sheet(detailedData);
-
-  XLSX.utils.book_append_sheet(wb, wsSummary, "Model Target Overview");
-  XLSX.utils.book_append_sheet(wb, wsCategory, "Category y-Breakdown");
-  XLSX.utils.book_append_sheet(wb, wsDetailed, "Configure Input Features (X)");
-
+  XLSX.utils.book_append_sheet(
+    wb,
+    XLSX.utils.aoa_to_sheet(summaryData),
+    "Model Target Overview",
+  );
+  XLSX.utils.book_append_sheet(
+    wb,
+    XLSX.utils.aoa_to_sheet(categoryData),
+    "Category y-Breakdown",
+  );
+  XLSX.utils.book_append_sheet(
+    wb,
+    XLSX.utils.aoa_to_sheet(detailedData),
+    "All Predictions (X→y)",
+  );
   XLSX.writeFile(wb, "ML_Pipeline_X_y_Forecast_Report.xlsx");
 }
 
-// STEP 4: Graph Canvas PNG Exporter Image Engine Logic
+// STEP 4: Graph PNG Export
 function downloadChartAsImage() {
   const chartInstance = analyticsState.trendChart;
-
   if (!chartInstance || analyticsState.forecasts.length === 0) {
     alert(
       "Please run at least one forecast prediction to generate a graph before downloading.",
     );
     return;
   }
-
   const imageURI = chartInstance.toBase64Image();
-  const downloadLink = document.createElement("a");
-  downloadLink.href = imageURI;
-  downloadLink.download = "ML_Pipeline_X_y_Trend_Graph.png";
-
-  document.body.appendChild(downloadLink);
-  downloadLink.click();
-  document.body.removeChild(downloadLink);
+  const a = document.createElement("a");
+  a.href = imageURI;
+  a.download = "ML_Pipeline_X_y_Trend_Graph.png";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
-// Event Listeners setup when webpage DOM loads fully
+// DOM ready
 document.addEventListener("DOMContentLoaded", () => {
   initTrendChart();
 
   const exportBtn = document.getElementById("export-excel-btn");
-  if (exportBtn) {
-    exportBtn.addEventListener("click", exportToExcel);
-  }
+  if (exportBtn) exportBtn.addEventListener("click", exportToExcel);
 
   const downloadGraphBtn = document.getElementById("download-graph-btn");
-  if (downloadGraphBtn) {
+  if (downloadGraphBtn)
     downloadGraphBtn.addEventListener("click", downloadChartAsImage);
-  }
 });

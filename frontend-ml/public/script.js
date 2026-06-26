@@ -22,6 +22,7 @@ const resultValue = document.getElementById("predicted-value");
 const errorBox = document.getElementById("error-box");
 const errorMsg = document.getElementById("error-msg");
 
+// ── Category → price range ─────────────────────────────────
 if (categoryEl) {
   categoryEl.addEventListener("change", () => {
     const cat = categoryEl.value;
@@ -33,6 +34,7 @@ if (categoryEl) {
       priceEl.value = "";
       priceEl.placeholder = "Select a category first";
       priceEl.disabled = true;
+      priceHint.textContent = "";
       priceHint.style.display = "none";
       return;
     }
@@ -51,6 +53,7 @@ if (categoryEl) {
   });
 }
 
+// ── Manual form submit → single prediction ─────────────────
 if (form) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -108,6 +111,7 @@ if (form) {
         resultValue.textContent = formatted;
         showResult();
 
+        // Pass to dashboard — source: "manual" so chart distinguishes it from CSV rows
         if (typeof window.showResult === "function") {
           window.showResult(formatted, {
             location: locationEl.value,
@@ -115,7 +119,8 @@ if (form) {
             day: dayEl.options[dayEl.selectedIndex].text,
             month: monthEl.options[monthEl.selectedIndex].text,
             hour: hourEl.value,
-            price: price,
+            price,
+            source: "manual",
           });
         }
       } else {
@@ -134,6 +139,7 @@ if (form) {
   });
 }
 
+// ── Helpers ────────────────────────────────────────────────
 function setLoading(loading) {
   if (!btn || !btnText || !btnLoader) return;
   btn.disabled = loading;

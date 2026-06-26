@@ -20,7 +20,6 @@ df['is_weekend'] = df['day_of_week'].apply(lambda x: 1 if x >= 5 else 0)
 df['hour'] = pd.to_datetime(df['transaction_time'], format='%H:%M:%S').dt.hour
 
 
-
 # Aggregate data to get total sales metrics per hour, location, and product category
 ml_data = df.groupby(['store_location', 'product_category', 'day_of_week', 'month', 'is_weekend', 'hour']).agg({
     'transaction_qty': 'sum',
