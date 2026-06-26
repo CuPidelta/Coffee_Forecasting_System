@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Para payagan ang koneksyon mula sa iyong HTML files
+CORS(app)  # connection sa HTML files
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -11,7 +11,7 @@ def login():
         username = data.get('username')
         password = data.get('password')
         
-        # Hardcoded credentials para sa iyong system demo
+      
         if username == "admin" and password == "coffee123":
             return jsonify({
                 'success': True,
@@ -21,7 +21,7 @@ def login():
         else:
             return jsonify({
                 'success': False,
-                'message': 'Maling Username o Password! Subukan ulit.'
+                'message': 'Wrong Username or Password! Try Again.'
             })
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)})
