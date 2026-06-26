@@ -4,7 +4,7 @@ const analyticsState = {
   trendChart: null,
 };
 
-// HIGH-CONTRAST VIBRANT COLORS FOR LINES (STORE BRANCHES)
+//  (STORE BRANCHES)
 const STORE_COLORS = {
   "Lower Manhattan": "#5c62f5", // Vibrant Electric Indigo
   "Hell's Kitchen": "#f59e0b", // High-Visibility Amber/Orange
@@ -12,7 +12,7 @@ const STORE_COLORS = {
 };
 const DEFAULT_COLOR = "#94a3b8";
 
-// HIGH-CONTRAST NEON/BRIGHT COLORS FOR POINTS (PRODUCT CATEGORIES)
+//  (PRODUCT CATEGORIES)
 const CAT_COLORS = {
   Coffee: "#6366f1", // Vivid Indigo
   Tea: "#06b6d4", // Bright Cyan/Sky Blue
@@ -25,7 +25,7 @@ const CAT_COLORS = {
   "Packaged Chocolate": "#14b8a6", // Bright Teal
 };
 
-// STEP 1: Initialization of Graph (Chart.js) - White Text Legend & Category Color-Matched Tooltips
+// STEP 1: Initialization of Graph (Chart.js)
 function initTrendChart() {
   const ctx = document.getElementById("trendChart");
   if (!ctx) return;
