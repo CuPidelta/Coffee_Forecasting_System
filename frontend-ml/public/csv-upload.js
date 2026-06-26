@@ -1,10 +1,3 @@
-/**
- * csv-upload.js
- * Batch CSV prediction for Sales Demand Forecasting System.
- * Depends on: dashboard.js (window.showBatchResults), script.js, XLSX (SheetJS)
- * Load AFTER script.js and dashboard.js in index.html.
- */
-
 (function () {
   "use strict";
 
